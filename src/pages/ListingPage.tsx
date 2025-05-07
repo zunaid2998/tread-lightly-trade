@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -18,14 +17,49 @@ const ListingPage = () => {
   const [activeFilters, setActiveFilters] = useState<any>({});
   const [sortBy, setSortBy] = useState("newest");
   
-  // Filter products based on URL parameters
-  const filteredProducts = categoryParam 
-    ? mockProducts.filter(p => p.brand.toLowerCase() === categoryParam.toLowerCase() || categoryParam === "all") 
-    : mockProducts;
+  // Updated filtering logic to include activeFilters
+  const filteredProducts = mockProducts.filter(product => {
+    const matchesCategory = categoryParam
+      ? product.brand.toLowerCase() === categoryParam.toLowerCase() || categoryParam === "all"
+      : true;
+
+    const matchesPrice = activeFilters.priceRange
+      ? product.price >= activeFilters.priceRange[0] && product.price <= activeFilters.priceRange[1]
+      : true;
+
+    const matchesBrand = activeFilters.selectedBrands
+      ? activeFilters.selectedBrands.includes(product.brand)
+      : true;
+
+    const matchesCondition = activeFilters.selectedConditions
+      ? activeFilters.selectedConditions.includes(product.condition)
+      : true;
+
+    // Ensure size filtering logic handles size as a string
+    const matchesSize = activeFilters.selectedSizes
+      ? activeFilters.selectedSizes.map(String).includes(product.size)
+      : true;
+
+    return matchesCategory && matchesPrice && matchesBrand && matchesCondition && matchesSize;
+  });
   
+  // Updated handleFilterChange to handle clearing filters
   const handleFilterChange = (filters: any) => {
-    setActiveFilters(filters);
-    // In a real app, this would trigger API calls or more complex filtering
+    const updatedFilters = { ...activeFilters, ...filters };
+
+    // Remove empty filter categories
+    Object.keys(updatedFilters).forEach(key => {
+      if (!updatedFilters[key] || updatedFilters[key].length === 0) {
+        delete updatedFilters[key];
+      }
+    });
+
+    setActiveFilters(updatedFilters);
+  };
+
+  // Added a resetFilters function to clear activeFilters
+  const resetFilters = () => {
+    setActiveFilters({});
   };
 
   return (
@@ -62,6 +96,15 @@ const ListingPage = () => {
                   <SelectItem value="price-high">Price: High to Low</SelectItem>
                 </SelectContent>
               </Select>
+
+              {/* Add a button to reset filters in the JSX */}
+              <Button 
+                variant="outline" 
+                onClick={resetFilters} 
+                className="ml-2"
+              >
+                Reset Filters
+              </Button>
             </div>
           </div>
           

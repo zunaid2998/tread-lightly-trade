@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Accordion,
@@ -16,10 +15,37 @@ interface ProductFiltersProps {
 
 const ProductFilters: React.FC<ProductFiltersProps> = ({ onFilterChange }) => {
   const [priceRange, setPriceRange] = React.useState([0, 500]);
+  const [selectedBrands, setSelectedBrands] = React.useState<string[]>([]);
+  const [selectedConditions, setSelectedConditions] = React.useState<string[]>([]);
+  const [selectedSizes, setSelectedSizes] = React.useState<number[]>([]);
 
   const handlePriceChange = (value: number[]) => {
     setPriceRange(value);
-    onFilterChange({ priceRange: value });
+    onFilterChange({ priceRange: value, selectedBrands, selectedConditions, selectedSizes });
+  };
+
+  const handleBrandChange = (brand: string, checked: boolean) => {
+    const updatedBrands = checked
+      ? [...selectedBrands, brand]
+      : selectedBrands.filter(b => b !== brand);
+    setSelectedBrands(updatedBrands);
+    onFilterChange({ priceRange, selectedBrands: updatedBrands, selectedConditions, selectedSizes });
+  };
+
+  const handleConditionChange = (condition: string, checked: boolean) => {
+    const updatedConditions = checked
+      ? [...selectedConditions, condition]
+      : selectedConditions.filter(c => c !== condition);
+    setSelectedConditions(updatedConditions);
+    onFilterChange({ priceRange, selectedBrands, selectedConditions: updatedConditions, selectedSizes });
+  };
+
+  const handleSizeChange = (size: number, checked: boolean) => {
+    const updatedSizes = checked
+      ? [...selectedSizes, size]
+      : selectedSizes.filter(s => s !== size);
+    setSelectedSizes(updatedSizes);
+    onFilterChange({ priceRange, selectedBrands, selectedConditions, selectedSizes: updatedSizes });
   };
 
   return (
@@ -51,7 +77,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ onFilterChange }) => {
             <div className="space-y-2">
               {["Nike", "Adidas", "New Balance", "Puma", "Converse", "Vans"].map(brand => (
                 <div key={brand} className="flex items-center space-x-2">
-                  <Checkbox id={`brand-${brand}`} />
+                  <Checkbox id={`brand-${brand}`} onCheckedChange={(checked) => handleBrandChange(brand, !!checked)} />
                   <Label htmlFor={`brand-${brand}`}>{brand}</Label>
                 </div>
               ))}
@@ -65,7 +91,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ onFilterChange }) => {
             <div className="space-y-2">
               {["New", "Like New", "Good", "Fair"].map(condition => (
                 <div key={condition} className="flex items-center space-x-2">
-                  <Checkbox id={`condition-${condition}`} />
+                  <Checkbox id={`condition-${condition}`} onCheckedChange={(checked) => handleConditionChange(condition, !!checked)} />
                   <Label htmlFor={`condition-${condition}`}>{condition}</Label>
                 </div>
               ))}
@@ -79,7 +105,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ onFilterChange }) => {
             <div className="grid grid-cols-3 gap-1">
               {[6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, 12].map(size => (
                 <div key={size} className="flex items-center space-x-1">
-                  <Checkbox id={`size-${size}`} />
+                  <Checkbox id={`size-${size}`} onCheckedChange={(checked) => handleSizeChange(size, !!checked)} />
                   <Label htmlFor={`size-${size}`} className="text-sm">{size}</Label>
                 </div>
               ))}
