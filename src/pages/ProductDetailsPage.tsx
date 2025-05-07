@@ -16,6 +16,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { getProductById, mockProducts } from '@/data/mockProducts';
 import { useToast } from '@/hooks/use-toast';
+import ProductCard from '@/components/ProductCard';
 
 const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
