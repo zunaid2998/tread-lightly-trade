@@ -12,15 +12,20 @@ import { ChevronDown } from 'lucide-react';
 const ListingPage = () => {
   const [searchParams] = useSearchParams();
   const categoryParam = searchParams.get('category');
+  const searchQuery = searchParams.get('search')?.toLowerCase() || "";
   
   const [showFilters, setShowFilters] = useState(false);
   const [activeFilters, setActiveFilters] = useState<any>({});
   const [sortBy, setSortBy] = useState("newest");
   
-  // Updated filtering logic to include activeFilters
+  // Updated filtering logic to include search query and activeFilters
   const filteredProducts = mockProducts.filter(product => {
     const matchesCategory = categoryParam
       ? product.brand.toLowerCase() === categoryParam.toLowerCase() || categoryParam === "all"
+      : true;
+
+    const matchesSearch = searchQuery
+      ? product.title.toLowerCase().includes(searchQuery) || product.brand.toLowerCase().includes(searchQuery)
       : true;
 
     const matchesPrice = activeFilters.priceRange
@@ -40,7 +45,7 @@ const ListingPage = () => {
       ? activeFilters.selectedSizes.map(String).includes(product.size)
       : true;
 
-    return matchesCategory && matchesPrice && matchesBrand && matchesCondition && matchesSize;
+    return matchesCategory && matchesSearch && matchesPrice && matchesBrand && matchesCondition && matchesSize;
   });
 
   // Added sorting logic based on the sortBy state
