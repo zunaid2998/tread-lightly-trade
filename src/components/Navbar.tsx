@@ -8,12 +8,19 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState("");
 
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/listing?search=${encodeURIComponent(searchQuery)}`);
+  const handleSearch = (query: string) => {
+    if (query.trim()) {
+      navigate(`/listing?search=${encodeURIComponent(query)}`);
     }
   };
+
+  React.useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      handleSearch(searchQuery);
+    }, 100); // Debounce for 500ms
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 shadow-sm">
@@ -26,7 +33,7 @@ const Navbar: React.FC = () => {
 
           {/* Search Bar - Hidden on mobile */}
           <div className="hidden md:flex flex-1 mx-10">
-            <form onSubmit={handleSearch} className="relative w-full max-w-lg">
+            <form className="relative w-full max-w-lg">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
               <Input 
                 type="text" 
