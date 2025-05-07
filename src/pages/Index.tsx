@@ -27,7 +27,7 @@ const Index = () => {
                 <Button asChild className="button-secondary">
                   <Link to="/listing">Shop Now</Link>
                 </Button>
-                <Button variant="outline" className="border-white text-white hover:bg-white hover:text-soletrade-navy">
+                <Button variant="outline" className="border-white text-black hover:bg-white hover:text-soletrade-navy">
                   Sell Your Shoes
                 </Button>
               </div>
