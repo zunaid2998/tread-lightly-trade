@@ -42,6 +42,18 @@ const ListingPage = () => {
 
     return matchesCategory && matchesPrice && matchesBrand && matchesCondition && matchesSize;
   });
+
+  // Added sorting logic based on the sortBy state
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (sortBy === "newest") {
+      return b.id.localeCompare(a.id); // Assuming `id` is sequential for newest
+    } else if (sortBy === "price-low") {
+      return a.price - b.price;
+    } else if (sortBy === "price-high") {
+      return b.price - a.price;
+    }
+    return 0;
+  });
   
   // Updated handleFilterChange to handle clearing filters
   const handleFilterChange = (filters: any) => {
@@ -118,9 +130,9 @@ const ListingPage = () => {
             
             {/* Product Grid */}
             <div className="flex-1">
-              {filteredProducts.length > 0 ? (
+              {sortedProducts.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {filteredProducts.map(product => (
+                  {sortedProducts.map(product => (
                     <ProductCard key={product.id} product={product} />
                   ))}
                 </div>
